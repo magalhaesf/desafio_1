@@ -1,0 +1,45 @@
+<input type="hidden" value="3" id="codigo">
+<div class="barra-botao">
+    <button class="btn btn-inserir">Inserir</button>
+</div>
+<table id="tabela" class="table table-sm table-striped table-hover" style="width:100%">
+    <thead>
+        <tr>
+            <th>Código</th>
+            <th>Descrição</th>
+            <th>Valor</th>
+            <th>Tipo do produto</th>
+            <th>Unidade</th>
+        </tr>
+    </thead>
+</table>
+<script>
+    $('#tabela').DataTable( {
+        "ajax": 'acoes/produtos.php',
+        "language": {
+            "url": "../vendor/datatable/pt.json"
+        }
+    });
+    $(document).on('click', '.btn-inserir', function(){
+        var formulario = '<form id="frmInserirAlterar" method="POST"><div class="form-group"><label for="descricao">Descrição</label><input type="text" class="form-control" id="descricao" name="descricao" placeholder="Feijão"></div><div class="form-group"><label for="valor">Valor</label><input type="text" class="form-control" id="valor" name="valor" placeholder="8,40"></div><div class="form-group"><label for="id_tipo_produtos">Tipo de produto</label><select class="form-control" id="id_tipo_produtos" name="id_tipo_produtos"></select></div><div class="form-group"><label for="id_unidades">Unidade</label><select class="form-control" id="id_unidades" name="id_unidades"></select></div><input type="hidden" value="3" name="codigo"><input type="hidden" value="incluir" name="acao"></form>';
+        $('#modal_sys_title').html('Unidades');
+        $('#modal_sys_body').html(formulario);
+        $('#modal_btn_salvar').show();
+        $('#modal_sys').modal('show');
+
+        $.getJSON('acoes/tipoProdutos.php', function (data) {
+            $.each(data, function (key, entry) {
+                $.each(entry, function (k, e) {
+                    $('#id_tipo_produtos').append($('<option></option>').attr('value', e[0]).text(e[1]));
+                })
+            })
+        });
+        $.getJSON('acoes/unidades.php', function (data) {
+            $.each(data, function (key, entry) {
+                $.each(entry, function (k, e) {
+                    $('#id_unidades').append($('<option></option>').attr('value', e[0]).text(e[1]));
+                })
+            })
+        });
+    });
+</script>

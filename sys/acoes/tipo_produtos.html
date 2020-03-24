@@ -1,0 +1,28 @@
+<input type="hidden" value="2" id="codigo">
+<div class="barra-botao">
+    <button class="btn btn-inserir">Inserir</button>
+</div>
+<table id="tabela" class="table table-sm table-striped table-hover" style="width:100%">
+    <thead>
+        <tr>
+            <th>Código</th>
+            <th>Descrição</th>
+            <th>Imposto</th>
+        </tr>
+    </thead>
+</table>
+<script>
+    $('#tabela').DataTable( {
+        "ajax": 'acoes/tipoProdutos.php',
+        "language": {
+            "url": "../vendor/datatable/pt.json"
+        }
+    });
+    $(document).on('click', '.btn-inserir', function(){
+        var formulario = '<form id="frmInserirAlterar" method="POST"><div class="form-group"><label for="descricao">Descrição</label><input type="text" class="form-control" id="descricao" name="descricao" placeholder="Cereais"></div><div class="form-group"><label for="imposto">Imposto</label><input type="text" class="form-control" id="imposto" name="imposto" placeholder="5,5"></div><input type="hidden" value="2" name="codigo"><input type="hidden" value="incluir" name="acao"></form>';
+        $('#modal_sys_title').html('Unidades');
+        $('#modal_sys_body').html(formulario);
+        $('#modal_btn_salvar').show();
+        $('#modal_sys').modal('show');
+    });
+</script>

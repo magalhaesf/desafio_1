@@ -1,0 +1,112 @@
+html,body {
+    height: 100%;
+}
+  
+#containerCabecalho {
+    height: 50px;
+    background-image: linear-gradient(rgba(186, 3, 252, 0.9), rgba(107, 3, 252, 0.9));
+    color: white;
+    font-weight: bold;
+}
+
+#containerPrincipal {
+    height: calc(100% - 50px - 25px);
+}
+
+#containerRodape {
+    height: 25px;
+    background-image: linear-gradient(rgba(186, 3, 252, 0.9), rgba(107, 3, 252, 0.9));
+    color: white;
+}
+
+#rowMenu {
+    background-image: linear-gradient(rgba(107, 3, 252, 0.9), rgb(186, 3, 252, 0.9));
+    color: white;
+}
+
+.btn-menu {
+    color: white;
+    background-color: rgba(161, 86, 252, 0.9);
+    border-color: rgba(161, 86, 252, 0.9);
+}
+
+.btn-menu:hover, .btn-menu:not(:disabled):not(.disabled):active, .btn-menu.active, .btn-menu:focus, .btn-menu:not(:disabled):not(.disabled):active:focus{
+    background-color: rgba(138, 41, 255, 0.9);
+    border-color: rgba(138, 41, 255, 0.9);
+    box-shadow: 0 0 0 .2rem white;
+}
+
+.loader {
+    display: inline-block;
+    width: 80px;
+    height: 80px;
+}
+.loader:after {
+    content: " ";
+    display: block;
+    width: 64px;
+    height: 64px;
+    margin: 8px;
+    border-radius: 50%;
+    border: 6px solid #fff;
+    border-color: #fff transparent #fff transparent;
+    animation: loader 1.2s linear infinite;
+}
+@keyframes loader {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+#tabela_wrapper {
+    margin-top: 5px;
+}
+.btn-inserir, .btn-buscar, .btn-registrar {
+    float: right;
+    margin-top: 10px;
+    color: white;
+    background-color: rgba(161, 86, 252, 0.9);
+    border-color: rgba(161, 86, 252, 0.9);
+}
+.btn-inserir:hover, .btn-inserir:focus, .btn-buscar:hover, .btn-buscar:focus, .btn_registrar:hover, .btn_registrar:focus{
+    background-color: rgba(138, 41, 255, 0.9);
+    border-color: rgba(138, 41, 255, 0.9);
+    box-shadow: 0 0 0 .2rem white;
+}
+.btn-buscar, .btn_registrar {
+    margin-top: 0px;
+}
+.barra-botao {
+    display: flow-root;
+}
+.btn-salvar {
+    color: white;
+    background-color: rgba(161, 86, 252, 0.9);
+    border-color: rgba(161, 86, 252, 0.9);
+}
+.btn-salvar:hover, .btn-salvar:focus{
+    background-color: rgba(138, 41, 255, 0.9);
+    border-color: rgba(138, 41, 255, 0.9);
+    box-shadow: 0 0 0 .2rem white;
+}
+table tbody tr {
+    cursor: pointer;
+}
+.vendas_lista {
+    border-top: 0px;
+    border-left: 2px;
+    border-right: 0px;
+    border-bottom: 0px;
+    border-style: double;
+    border-left-color: rgba(107, 3, 252, 0.9);
+}
+#form_vendas {
+    border-top: 2px;
+    border-left: 0px;
+    border-right: 0px;
+    border-bottom: 0px;
+    border-style: double;
+    border-top-color: rgba(107, 3, 252, 0.9);
+}

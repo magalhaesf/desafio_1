@@ -1,0 +1,163 @@
+<div class="container-fluid h-100">
+    <div class="row h-100 vendas">
+        <div class="col-4 vendas_produtos align-self-center">
+            <div class="row">
+                <div class="col">
+                    <form method="POST" id="form_busca">
+                        <div class="form-group">
+                            <label for="cod_registro">Código do produto</label>
+                            <input type="number" class="form-control" id="cod_registro">
+                        </div>
+                    </form>
+                    <button class="btn btn-buscar" id="btn-buscar">Buscar</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <form method="POST" id="form_vendas">
+                        <div class="form-group">
+                        <label for="descricao">Descrição do Produto</label>
+                        <input type="text" class="form-control" id="descricao" readonly>
+                        <input type="hidden" id="cod">
+                        </div>
+                        <div class="form-group">
+                            <label for="tipoProduto">Tipo do Produto</label>
+                            <input type="text" class="form-control" id="tipoProduto" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="unidade">Unidade</label>
+                            <input type="text" class="form-control" id="unidade" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="valor">Valor</label>
+                            <input type="text" class="form-control" id="valor" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="quantidade">Quantidade</label>
+                            <input type="number" class="form-control" id="quantidade">
+                            <input type="hidden" id="imposto">
+                        </div>
+                    </form>
+                    <button class="btn btn-registrar" id="btn-registrar">Registrar</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-8 vendas_lista">
+            <input type="text" class="form-control" id="valorTotal" readonly style="display: inline-block;width:33%;"><input type="text" class="form-control" id="impostoTotal" readonly style="display: inline-block;width:33%;"><input type="text" class="form-control" id="impostoPagoTotal" readonly style="display: inline-block;width:33%;">
+            <table id="tabelaProdutos" class="table table-sm table-striped table-hover" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Cod</th>
+                        <th>Descrição</th>
+                        <th>Qtd</th>
+                        <th>Valor</th>
+                        <th>Imposto</th>
+                        <th>Imposto pago</th>
+                    </tr>
+                </thead>
+            </table>
+            <button class="btn btn-registrar" id="btn-vender">Registrar venda</button>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function(){
+        var arProdutos = [];
+        $.fn.dataTable.Api.register( 'sum()', function ( ) {
+            return this.flatten().reduce( function ( a, b ) {
+                if ( typeof a === 'string' ) {
+                    a = a.replace(/[^\d.-]/g, '') * 1;
+                }
+                if ( typeof b === 'string' ) {
+                    b = b.replace(/[^\d.-]/g, '') * 1;
+                }
+        
+                return a + b;
+            }, 0 );
+        });
+        $('#tabelaProdutos').DataTable( {
+            "ajax": function (data, callback, settings) {
+                callback ({data:arProdutos});
+             },
+            "language": {
+                "url": "../vendor/datatable/pt.json"
+            },
+            "searching": false,
+            "ordering": false,
+            "lengthChange": false
+        });
+        $('#btn-buscar').on('click', function(){
+            $.ajax({
+                url : "acoes/consultar.php",
+                type : 'POST',
+                data: {codigo: 3, 
+                       cod_registro: $('#cod_registro').val()}
+            })
+            .done(function(html){
+                var resultado = html.split('#');
+                $('#cod').val(resultado[0]);
+                $('#descricao').val(resultado[1]);
+                $('#valor').val(resultado[2]);
+                $('#tipoProduto').val(resultado[5]);
+                $('#unidade').val(resultado[6]);
+                $('#imposto').val(resultado[7]);
+            })
+        });
+        $('#btn-registrar').on('click', function(){
+            var valor = $('#valor').val();
+            valor = valor.replace(',', '.');
+            var quantidade = $('#quantidade').val().replace(',','.');
+            var valorTotal = String(valor * quantidade);
+            var valorSemImposto = ((Number(valorTotal) * Number($('#imposto').val()))/100);
+            valorSemImposto = String(round(valorSemImposto, 2));
+            valorSemImposto = valorSemImposto.replace('.',',');
+            valorTotal = valorTotal.replace('.',',');
+            arProdutos.push([$('#cod').val(),$('#descricao').val(),$('#quantidade').val(),valorTotal,$('#imposto').val().replace('.',','),valorSemImposto]);
+            $('#tabelaProdutos').DataTable().ajax.reload();
+            
+            var somaTotal = 0;
+            var impostoTotal = 0;
+            var impostoPagoTotal = 0
+            for (var i=0; i<arProdutos.length; i++){      
+                somaTotal += parseFloat(arProdutos[i][3].replace(',','.'));
+                impostoTotal += parseFloat(arProdutos[i][4].replace(',','.'));
+                impostoPagoTotal += parseFloat(arProdutos[i][5].replace(',','.'));
+            }
+            somaTotal = String(round(somaTotal, 2)).replace('.',',');
+            impostoTotal = String(round(impostoTotal, 2)).replace('.',',');
+            impostoPagoTotal = String(round(impostoPagoTotal, 2)).replace('.',',');
+            $('#valorTotal').val(somaTotal);
+            $('#impostoTotal').val(impostoTotal);
+            $('#impostoPagoTotal').val(impostoPagoTotal);
+        });
+        $('#btn-vender').on('click', function(){
+            var dadosTabela = $('#tabelaProdutos').DataTable().rows().data().toArray();
+            $.ajax({
+                url : "acoes/salvar.php",
+                type : 'POST',
+                data: {tabela: dadosTabela,
+                       codigo: 4,
+                       acao: 'incluir',
+                       valorTotal: $('#valorTotal').val(),
+                       impostoTotal: $('#impostoTotal').val(),
+                       impostoPagoTotal:$('#impostoPagoTotal').val()}
+            })
+            .done(function(html){
+                if (html == 1) {
+                    $('#cod_registro').val('');
+                    $('#descricao').val('');
+                    $('#valor').val('');
+                    $('#tipoProduto').val('');
+                    $('#unidade').val('');
+                    $('#imposto').val('');
+                    $('#quantidade').val('');
+                    arProdutos = [];
+                    $('#tabelaProdutos').DataTable().ajax.reload();
+                    $('#valorTotal').val('');
+                    $('#impostoTotal').val('');
+                    $('#impostoPagoTotal').val('');
+                }
+            })
+        });
+    });
+</script>
